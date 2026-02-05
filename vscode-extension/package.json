@@ -1,0 +1,103 @@
+{
+  "name": "poly-container-lsp",
+  "displayName": "PolyContainer LSP",
+  "description": "Language Server Protocol for container runtime management (nerdctl, podman, docker)",
+  "version": "0.1.0",
+  "publisher": "hyperpolymath",
+  "license": "PMPL-1.0-or-later",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "docker",
+    "podman",
+    "nerdctl",
+    "container",
+    "containerfile",
+    "dockerfile",
+    "lsp",
+    "language-server"
+  ],
+  "activationEvents": [
+    "onLanguage:dockerfile",
+    "onLanguage:yaml",
+    "workspaceContains:**/Dockerfile",
+    "workspaceContains:**/Containerfile",
+    "workspaceContains:**/docker-compose.yml",
+    "workspaceContains:**/compose.yml"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "PolyContainer LSP",
+      "properties": {
+        "polyContainerLsp.runtime": {
+          "type": "string",
+          "enum": ["auto", "nerdctl", "podman", "docker"],
+          "default": "auto",
+          "description": "Preferred container runtime (auto-detect by default)"
+        },
+        "polyContainerLsp.trace.server": {
+          "type": "string",
+          "enum": ["off", "messages", "verbose"],
+          "default": "off",
+          "description": "Traces communication between VS Code and the language server"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "polyContainerLsp.runContainer",
+        "title": "Run Container",
+        "category": "PolyContainer"
+      },
+      {
+        "command": "polyContainerLsp.buildImage",
+        "title": "Build Image",
+        "category": "PolyContainer"
+      },
+      {
+        "command": "polyContainerLsp.inspectContainer",
+        "title": "Inspect Container",
+        "category": "PolyContainer"
+      },
+      {
+        "command": "polyContainerLsp.viewLogs",
+        "title": "View Container Logs",
+        "category": "PolyContainer"
+      },
+      {
+        "command": "polyContainerLsp.detectRuntimes",
+        "title": "Detect Available Container Runtimes",
+        "category": "PolyContainer"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0",
+    "@types/vscode": "^1.75.0",
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hyperpolymath/poly-container-lsp"
+  },
+  "author": {
+    "name": "Jonathan D.A. Jewell",
+    "email": "jonathan.jewell@open.ac.uk"
+  }
+}

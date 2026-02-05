@@ -1,0 +1,180 @@
+= poly-container-lsp
+:toc:
+:toclevels: 3
+
+Language Server Protocol implementation for container runtime management (nerdctl, podman, docker)
+
+image:https://img.shields.io/badge/License-PMPL--1.0-blue.svg[License: PMPL-1.0, link=https://github.com/hyperpolymath/palimpsest-license]
+image:https://img.shields.io/badge/elixir-1.17+-purple.svg[Elixir 1.17+, link=https://elixir-lang.org/]
+
+== Overview
+
+**poly-container-lsp** provides IDE integration for container runtime management across multiple container engines. Built with Elixir's BEAM VM, each container runtime adapter runs as an isolated process with automatic fault recovery.
+
+== Features
+
+=== Runtime Support
+
+* 🐋 **Docker**: Industry standard container platform
+* 🦭 **Podman**: Daemonless, rootless OCI container engine
+* 🦀 **nerdctl**: Docker-compatible containerd CLI
+
+=== IDE Integration
+
+* 🔄 **Auto-detection**: Detects available container runtimes on system
+* 📦 **Container management**: Run, build, inspect, logs
+* 🔍 **Diagnostics**: Dockerfile/Containerfile validation
+* ✨ **Auto-completion**: Container commands and options
+* 🛡️ **Fault isolation**: Crash in one adapter doesn't affect others
+
+=== Container Operations
+
+* **Run**: Start containers with full option support (ports, volumes, env, network)
+* **Build**: Build images from Dockerfile/Containerfile with BuildKit support
+* **Inspect**: Detailed container/image metadata
+* **Logs**: Stream or retrieve container logs with filtering
+
+== Installation
+
+[source,bash]
+----
+git clone https://github.com/hyperpolymath/poly-container-lsp
+cd poly-container-lsp
+mix deps.get
+mix compile
+----
+
+== Quick Start
+
+[source,elixir]
+----
+# Start the application
+iex -S mix
+
+# Detect available runtimes
+{:ok, true} = PolyContainer.Adapters.Nerdctl.detect()
+{:ok, true} = PolyContainer.Adapters.Podman.detect()
+{:ok, true} = PolyContainer.Adapters.Docker.detect()
+
+# Run a container
+{:ok, container_id} = PolyContainer.Adapters.Nerdctl.run(
+  "nginx:alpine",
+  name: "web-server",
+  ports: ["8080:80"],
+  detach: true
+)
+
+# Inspect the container
+{:ok, info} = PolyContainer.Adapters.Nerdctl.inspect(container_id)
+
+# View logs
+{:ok, %{logs: output}} = PolyContainer.Adapters.Nerdctl.logs(container_id, tail: 100)
+
+# Build an image
+{:ok, result} = PolyContainer.Adapters.Docker.build(
+  context: ".",
+  dockerfile: "Dockerfile",
+  tags: ["myapp:latest", "myapp:v1.0"]
+)
+----
+
+== Architecture
+
+Built on Elixir's BEAM VM for:
+
+* **Fault Tolerance**: Each adapter is a supervised GenServer
+* **Concurrency**: Handle multiple container operations simultaneously
+* **Hot Code Reloading**: Update adapters without downtime
+* **Process Isolation**: Adapter crashes don't affect others
+
+== Container Runtime Adapters
+
+=== nerdctl
+
+Docker-compatible CLI for containerd with enhanced features:
+
+* Rootless mode by default
+* Image encryption and signing
+* Lazy pulling (stargz)
+* IPFS integration
+* Native containerd support
+
+=== Podman
+
+Daemonless, rootless container engine:
+
+* No daemon required
+* Rootless by default
+* Pod support (Kubernetes-like)
+* Systemd integration
+* OCI-compliant
+
+=== Docker
+
+Industry standard container platform:
+
+* Docker Hub integration
+* Docker Compose support
+* BuildKit for efficient builds
+* Multi-platform builds
+* Comprehensive ecosystem
+
+== Development
+
+[source,bash]
+----
+# Install dependencies
+just deps
+
+# Run tests
+just test
+
+# Run quality checks (format, lint, dialyzer)
+just quality
+
+# Start REPL
+just repl
+
+# Format code
+just fmt
+
+# Run all CI checks locally
+just ci
+----
+
+== Testing
+
+[source,bash]
+----
+# Run all tests
+mix test
+
+# Run with coverage
+mix coveralls.html
+
+# Run specific adapter test
+just test-adapter nerdctl
+----
+
+== Roadmap
+
+* [ ] LSP server implementation with GenLSP
+* [ ] Dockerfile/Containerfile diagnostics
+* [ ] Docker Compose YAML validation
+* [ ] Kubernetes manifest support
+* [ ] VSCode extension
+* [ ] Neovim plugin
+* [ ] Container runtime benchmarking
+
+== Related Projects
+
+* https://github.com/hyperpolymath/poly-ssg-lsp[poly-ssg-lsp] - LSP for static site generators
+* https://github.com/hyperpolymath/poly-ssg-mcp[poly-ssg-mcp] - MCP for static site generators
+
+== License
+
+PMPL-1.0-or-later
+
+== Authors
+
+* Jonathan D.A. Jewell <jonathan.jewell@open.ac.uk>
